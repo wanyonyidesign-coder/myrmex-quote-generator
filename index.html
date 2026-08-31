@@ -126,6 +126,16 @@ textarea{resize:vertical}
   .q-table{font-size:11px}
   .q-bank-grid{grid-template-columns:1fr}
   .q-totals{width:100%}
+
+  .items-tbl thead{display:none}
+  .items-tbl,.items-tbl tbody,.items-tbl tr,.items-tbl td{display:block;width:100%}
+  .items-tbl{table-layout:auto}
+  .items-tbl tr{background:var(--field);border:1px solid var(--border-strong);border-radius:8px;padding:10px;margin-bottom:8px}
+  .items-tbl td{padding:5px 0;border:none}
+  .items-tbl td input{width:100%;box-sizing:border-box}
+  .items-tbl td[data-label]::before{content:attr(data-label);display:block;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;font-weight:700}
+  .items-tbl td[data-label="Total"]{text-align:left!important;padding-top:2px}
+  .items-tbl .td-del{display:flex;justify-content:flex-end;padding-top:4px}
 }
 @media print{
   body *{visibility:hidden}
@@ -176,10 +186,10 @@ textarea{resize:vertical}
         </div>
 
         <div class="sub-label">Line items</div>
-        <div style="overflow-x:auto"><table class="items-tbl">
+        <table class="items-tbl">
           <thead><tr><th style="width:44%">Description</th><th style="width:11%">Qty</th><th style="width:22%">Unit price</th><th style="width:17%">Total</th><th class="td-del"></th></tr></thead>
           <tbody id="items-body"></tbody>
-        </table></div>
+        </table>
         <button class="inline-btn-outline" onclick="addItem()">+ Add item</button>
 
         <div class="totals-box">
@@ -267,10 +277,10 @@ function removeItem(i){ if(items.length===1) return; items.splice(i,1); renderIt
 function renderItems(){
   document.getElementById('items-body').innerHTML = items.map((it,i) => `
     <tr>
-      <td><input value="${esc(it.desc)}" placeholder="Description" oninput="items[${i}].desc=this.value;update()"></td>
-      <td><input type="number" value="${it.qty}" min="1" style="text-align:center" oninput="items[${i}].qty=parseFloat(this.value)||1;update()"></td>
-      <td><input type="number" value="${it.unit||''}" placeholder="0" oninput="items[${i}].unit=parseFloat(this.value)||0;update()"></td>
-      <td style="text-align:right;font-size:12px;font-weight:600;padding:3px 6px">KES ${(it.qty*(it.unit||0)).toLocaleString()}</td>
+      <td data-label="Description"><input value="${esc(it.desc)}" placeholder="Description" oninput="items[${i}].desc=this.value;update()"></td>
+      <td data-label="Qty"><input type="number" value="${it.qty}" min="1" style="text-align:center" oninput="items[${i}].qty=parseFloat(this.value)||1;update()"></td>
+      <td data-label="Unit price"><input type="number" value="${it.unit||''}" placeholder="0" oninput="items[${i}].unit=parseFloat(this.value)||0;update()"></td>
+      <td data-label="Total" style="text-align:right;font-size:12px;font-weight:600;padding:3px 6px">KES ${(it.qty*(it.unit||0)).toLocaleString()}</td>
       <td class="td-del"><button class="btn-del" onclick="removeItem(${i})"><svg class="inline-icon" viewBox="0 0 24 24" style="width:12px;height:12px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td>
     </tr>`).join('');
 }
