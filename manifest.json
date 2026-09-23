@@ -1,6 +1,6 @@
 {
   "name": "Myrmex Quotation Generator",
-  "short_name": "Myrmex Quotes",
+  "short_name": "Myrmex QG",
   "description": "Smart. Reliable. Built to Last. Create and manage quotations for Myrmex Property Maintenance.",
   "start_url": "./index.html",
   "scope": "./",
