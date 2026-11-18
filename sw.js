@@ -1,10 +1,12 @@
-const CACHE_NAME = 'myrmex-quotes-v3';
+const CACHE_NAME = 'myrmex-hub-v3';
 const ASSETS = [
   './index.html',
+  './quotes.html',
+  './invoices.html',
+  './reports.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png',
-  './favicon-dark.png'
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
