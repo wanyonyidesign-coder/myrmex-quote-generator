@@ -1,10 +1,15 @@
-const CACHE_NAME = 'myrmex-hub-v4';
+const CACHE_NAME = 'myrmex-app-v8';
 const ASSETS = [
   './index.html',
+  './home.html',
+  './clients.html',
+  './tools.html',
   './quotes.html',
   './invoices.html',
   './reports.html',
   './hub.js',
+  './clientpick.js',
+  './checklist.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Myrmex Clients</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script><script src="hub.js"></script><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png" type="image/png"><meta name="theme-color" content="#0A0D0A">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--mid:#388E3C;--text:#EEF1EC;--sec:#A9B2A6;--mut:#71796E;--bd:#232922;--bds:#323A2E;--surf:#0A0D0A;--panel:#0E120D;--field:#1C231C}
+body{background:var(--surf);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:max(20px,env(safe-area-inset-top)) 18px 90px;min-height:100vh}
+.wrap{max-width:900px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}.sub{color:var(--mut);font-size:13px;margin-bottom:16px}
+.bar{display:flex;gap:8px;margin-bottom:14px}
+input,textarea{width:100%;background:var(--field);color:var(--text);border:1px solid var(--bds);border-radius:8px;padding:10px 12px;font:inherit;font-size:14px}
+textarea{min-height:70px;resize:vertical}label{display:block;font-size:11.5px;color:var(--sec);margin:10px 0 4px;font-weight:600}
+button{background:var(--field);color:var(--text);border:1px solid var(--bds);border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+button:hover{border-color:var(--mid)}button.p{background:var(--mid);border-color:var(--mid);color:#fff}button.d{color:#FF6568}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.top b{font-size:15.5px}.meta{font-size:12.5px;color:var(--sec);margin-top:3px;word-break:break-word}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{font-size:11.5px;background:var(--field);border-radius:20px;padding:4px 10px;color:var(--sec)}.chip.w{color:#E8B04B}
+.acts{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.docs{margin-top:10px;border-top:1px solid var(--bd);padding-top:8px;font-size:12.5px}.docs div{display:flex;justify-content:space-between;gap:8px;padding:4px 0;color:var(--sec)}.docs a{color:var(--mid);text-decoration:none;font-weight:600}
+.empty{color:var(--mut);font-size:13px;padding:18px 0;text-align:center}.h2{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sec);margin:20px 0 8px}
+#m{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}#m.on{display:flex}
+#mb{background:var(--panel);border:1px solid var(--bds);border-radius:12px;padding:18px;width:100%;max-width:420px;max-height:90vh;overflow:auto}
+</style></head><body><div class="wrap">
+<h1>Clients</h1><div class="sub">One record per client. Quotes, invoices, reports and checklists are matched to a client by name.</div>
+<div class="bar"><input id="q" placeholder="Search name, phone, email or location"><button class="p" id="add">+ New client</button></div>
+<div id="list"></div><div id="unl"></div></div>
+<div id="m"><div id="mb"></div></div>
+<script>
+const CK='myrmex_clients_v1',DK={quote:['myrmex_standalone_quotes','quotes.html','Quote'],invoice:['myrmex_invoices','invoices.html','Invoice'],report:['myrmexReports_v2','reports.html','Report'],checklist:['myrmexChecklistDrafts_v1','checklist.html','Checklist']};
+const $=i=>document.getElementById(i),rd=k=>{try{const v=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nk=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+const kes=n=>'KES '+Math.round(n||0).toLocaleString('en-KE');
+const nameOf=(kind,d)=>kind==='checklist'?d.clientName:d.client;
+const open=new Set();let C=[],D=[];
+function load(){C=rd(CK);D=[];for(const k in DK)rd(DK[k][0]).forEach(d=>{if(!d||(k==='invoice'&&d.status==='Void'))return;const n=nameOf(k,d);if(nk(n))D.push({kind:k,d,key:nk(n),name:String(n).trim()})})}
+const docsFor=c=>D.filter(x=>x.key===nk(c.name));
+function save(){localStorage.setItem(CK,JSON.stringify(C));sig=snap()}
+function render(){load();const q=nk($('q').value);
+ const rows=C.filter(c=>!q||nk([c.name,c.phone,c.email,c.location].join(' ')).includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+ $('list').innerHTML=rows.length?rows.map(c=>{const ds=docsFor(c),n=k=>ds.filter(x=>x.kind===k).length,bal=ds.filter(x=>x.kind==='invoice').reduce((s,x)=>s+(+x.d.balance||0),0);
+  const meta=[c.phone,c.email,c.location].filter(Boolean).map(esc).join(' · ');
+  return `<div class="card"><div class="top"><div><b>${esc(c.name)}</b><div class="meta">${meta||'No contact details'}</div>${c.notes?`<div class="meta">${esc(c.notes)}</div>`:''}</div></div>
+  <div class="chips"><span class="chip">${n('quote')} quotes</span><span class="chip">${n('invoice')} invoices</span><span class="chip">${n('report')} reports</span><span class="chip">${n('checklist')} checklists</span>${bal>0?`<span class="chip w">${kes(bal)} outstanding</span>`:''}</div>
+  <div class="acts"><button data-a="docs" data-id="${esc(c.id)}">${open.has(c.id)?'Hide':'Show'} documents</button><button data-a="edit" data-id="${esc(c.id)}">Edit</button><button class="d" data-a="del" data-id="${esc(c.id)}">Delete</button></div>
+  ${open.has(c.id)?`<div class="docs">${ds.length?ds.map(x=>`<div><span>${DK[x.kind][2]} · ${esc(x.d.num||x.d.date||x.d.title||'')}${x.d.total!=null&&x.kind!=='checklist'?' · '+kes(x.d.total):''}</span><a href="${DK[x.kind][1]}">Open ${DK[x.kind][2].toLowerCase()}s →</a></div>`).join(''):'<div>No documents match this name yet.</div>'}</div>`:''}</div>`}).join(''):`<div class="empty">${C.length?'No clients match your search.':'No clients yet. Add one, or pull names from your existing documents below.'}</div>`;
+ const have=new Set(C.map(c=>nk(c.name))),seen=new Map();D.forEach(x=>{if(!have.has(x.key)&&!seen.has(x.key))seen.set(x.key,x)});
+ $('unl').innerHTML=seen.size?`<div class="h2">NAMES IN DOCUMENTS, NOT IN CLIENTS</div>`+[...seen.values()].map(x=>`<div class="card"><div class="top"><div><b>${esc(x.name)}</b><div class="meta">${D.filter(y=>y.key===x.key).length} document(s)</div></div><button class="p" data-a="imp" data-k="${esc(x.key)}">Add as client</button></div></div>`).join(''):''}
+function form(c){c=c||{};$('mb').innerHTML=`<b style="font-size:16px">${c.id?'Edit client':'New client'}</b><label>Name *</label><input id="fn" value="${esc(c.name)}"><label>Phone</label><input id="fp" value="${esc(c.phone)}" inputmode="tel"><label>Email</label><input id="fe" value="${esc(c.email)}" inputmode="email"><label>Location</label><input id="fl" value="${esc(c.location)}"><label>Notes</label><textarea id="fo">${esc(c.notes)}</textarea><div id="er" style="color:#FF6568;font-size:12px;min-height:16px;margin-top:8px"></div><div class="acts"><button class="p" id="fs">Save</button><button id="fc">Cancel</button></div>`;
+ $('m').classList.add('on');$('fc').onclick=()=>$('m').classList.remove('on');
+ $('fs').onclick=()=>{const name=$('fn').value.trim();if(!name){$('er').textContent='Name is required.';return}
+  if(C.some(x=>x.id!==c.id&&nk(x.name)===nk(name))){$('er').textContent='A client with this name already exists.';return}
+  const now=new Date().toISOString(),v={name,phone:$('fp').value.trim(),email:$('fe').value.trim(),location:$('fl').value.trim(),notes:$('fo').value.trim(),updated:now};
+  if(c.id){const i=C.findIndex(x=>x.id===c.id);C[i]=Object.assign({},C[i],v)}else C.unshift(Object.assign({id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),created:now},v));
+  save();$('m').classList.remove('on');render()}}
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a,c=C.find(x=>x.id===b.dataset.id);
+ if(a==='docs'&&c){open.has(c.id)?open.delete(c.id):open.add(c.id);render()}
+ else if(a==='edit'&&c)form(c);
+ else if(a==='del'&&c){if(confirm('Delete '+c.name+'? Their quotes, invoices, reports and checklists are not deleted.')){C=C.filter(x=>x.id!==c.id);save();render()}}
+ else if(a==='imp'){const x=D.find(y=>y.key===b.dataset.k);if(x)form({name:x.name,phone:x.d.phone||x.d.clientContact||'',email:x.d.email||'',location:x.d.location||''})}});
+$('add').onclick=()=>form();$('q').oninput=render;$('m').onclick=e=>{if(e.target.id==='m')$('m').classList.remove('on')};
+var sig='';const snap=()=>[CK,...Object.values(DK).map(v=>v[0])].map(k=>localStorage.getItem(k)||'').join('|');
+const refresh=()=>{const n=snap();if(n!==sig&&!$('m').classList.contains('on')){sig=n;render()}};
+addEventListener('focus',refresh);addEventListener('storage',refresh);sig=snap();render();
+</script></body></html>
