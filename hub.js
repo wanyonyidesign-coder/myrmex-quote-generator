@@ -7,12 +7,12 @@ var LQH='--text:#1B1F1D;--text-secondary:#4B5A50;--text-muted:#6B7A70;--border:#
 var LR='--ink:#1b1f1d;--mu:#5b6b60;--bg:#f4f7f5;--cd:#fff;';
 var DR=':root[data-theme=dark]{--ink:#eef1ef;--mu:#a9b6ae;--bd:#2c3b31;--bg:#121712;--cd:#182019}';
 var st=document.createElement('style');
-st.textContent=':root[data-theme=light]{'+LQH+LR+'}@media(prefers-color-scheme:light){:root:not([data-theme]){'+LQH+'}}'+DR+'@media print{#hubDock,#hubBan,#hubModal{display:none!important}}body{padding-bottom:64px}';
+st.textContent=':root[data-theme=light]{'+LQH+LR+'}@media(prefers-color-scheme:light){:root:not([data-theme]){'+LQH+'}}'+DR+'@media print{#hubDock,#hubBan,#hubModal{display:none!important}}body{padding-bottom:64px}@media(max-width:520px){#hubDock{flex-direction:column!important;align-items:flex-start!important;gap:6px!important}body{padding-bottom:104px}}';
 document.head.appendChild(st);
 function eff(){var t=localStorage.getItem(TK);return t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}
 function applyTheme(){if(NT)return;var t=localStorage.getItem(TK);
  if(t==='light'||t==='dark')root.setAttribute('data-theme',t);else root.removeAttribute('data-theme');
- document.querySelectorAll('img.page-logo,img.logo').forEach(function(i){if(!i.dataset.o)i.dataset.o=i.src;i.src=eff()==='light'?LIGHT_LOGO:i.dataset.o});
+ document.querySelectorAll('img.page-logo,img.logo').forEach(function(i){if(!i.dataset.o){i.dataset.o=i.src;i.dataset.h=parseFloat(getComputedStyle(i).height)||30}var L=eff()==='light',H=+i.dataset.h;i.src=L?LIGHT_LOGO:i.dataset.o;/* dark wordmark is drawn to the same visible width as the light logo (3.719 x its height) */i.style.cssText=L?'':'height:'+H+'px;width:'+(H*3.719).toFixed(1)+'px;object-fit:contain;object-position:left top'});
  var b=document.getElementById('hubTheme');if(b)b.textContent='◐ '+(t==='light'?'Light':t==='dark'?'Dark':'Auto')}
 applyTheme();
 
@@ -21,6 +21,9 @@ var SB_URL='https://wwlafidmnhlvvvmsqspt.supabase.co',SB_KEY='sb_publishable_53b
 var KINDS={myrmex_standalone_quotes:'quote',myrmex_invoices:'invoice',myrmexReports_v2:'report',myrmexChecklistDrafts_v1:'checklist',myrmex_clients_v1:'client'};
 var KEYOF={quote:'myrmex_standalone_quotes',invoice:'myrmex_invoices',report:'myrmexReports_v2',checklist:'myrmexChecklistDrafts_v1',client:'myrmex_clients_v1'};
 var _set=Storage.prototype.setItem,applying=false,sb=null,user=null,busy=false,started=null,pt=null,ft=null,chan=null;
+function fireUser(){try{window.dispatchEvent(new Event('myrmex-user'))}catch(e){}}
+function uName(){var m=user&&user.user_metadata||{};return String(m.display_name||m.name||m.full_name||'').trim()}
+window.MyrmexAccount={signedIn:function(){return !!user},name:uName,set:function(n){if(!sb||!user)return Promise.resolve(false);return sb.auth.updateUser({data:{display_name:String(n||'').trim()}}).then(function(r){if(r&&r.data&&r.data.user)user=r.data.user;return !(r&&r.error)}).catch(function(){return false})}};
 function rd(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function wr(k,v){_set.call(localStorage,k,JSON.stringify(v))}
 function canon(o){return JSON.stringify(o,function(k,v){if(v&&typeof v==='object'&&!Array.isArray(v)){var s={};Object.keys(v).sort().forEach(function(x){s[x]=v[x]});return s}return v})}
@@ -106,7 +109,7 @@ function panel(){var m=modal('<b style="font-size:16px">Cloud sync</b><p style="
  m.querySelector('#hOut').onclick=async function(){await sb.auth.signOut();try{sb.removeAllChannels()}catch(e){}chan=null;user=null;started=null;chip('Sign in to sync');closeM()}}
 function init(){
  var CH='padding:7px 12px;border-radius:20px;border:1px solid #6b7a70;background:rgba(20,28,20,.92);color:#EEF1EC;font:600 12px -apple-system,Segoe UI,sans-serif;cursor:pointer';
- var d=document.createElement('div');d.id='hubDock';d.style.cssText='position:fixed;right:12px;bottom:12px;display:flex;gap:8px;z-index:50';
+ var d=document.createElement('div');d.id='hubDock';d.style.cssText='position:fixed;left:12px;bottom:12px;display:flex;gap:8px;z-index:50';
  d.innerHTML='<button id="hubTheme" style="'+CH+'"></button><button id="hubSync" style="'+CH+'">☁ …</button>';document.body.appendChild(d);
  if(NT)document.getElementById('hubTheme').style.display='none';
  document.getElementById('hubTheme').onclick=function(){var t=localStorage.getItem(TK);var n=t==='light'?'dark':t==='dark'?'auto':'light';
@@ -115,8 +118,8 @@ function init(){
  document.getElementById('hubSync').onclick=function(){if(!sb)alert('Sync needs an internet connection. It will start automatically when you are online.');else if(user)panel();else login()};
  if(!window.supabase){chip('Offline mode');return}
  sb=window.supabase.createClient(SB_URL,SB_KEY);
- sb.auth.onAuthStateChange(function(ev,s){user=s&&s.user||null;if(user){closeM();setTimeout(start,0)}else chip('Sign in to sync')});
+ sb.auth.onAuthStateChange(function(ev,s){user=s&&s.user||null;fireUser();if(user){closeM();setTimeout(start,0)}else chip('Sign in to sync')});
  sb.auth.getSession().then(function(r){var s=r.data&&r.data.session;
-  if(s){user=s.user;start()}else{chip('Sign in to sync');if(!sessionStorage.getItem('hubAsked')){sessionStorage.setItem('hubAsked','1');login()}}})}
+  if(s){user=s.user;fireUser();start()}else{chip('Sign in to sync');if(!sessionStorage.getItem('hubAsked')){sessionStorage.setItem('hubAsked','1');login()}}})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

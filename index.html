@@ -6,26 +6,31 @@
 @media(prefers-color-scheme:light){:root:not([data-theme]){--bg:#F4F7F5;--panel:#fff;--text:#1B1F1D;--sec:#4B5A50;--bd:#D7E2DA}}
 *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.app{display:flex;height:100vh;height:100dvh}
-aside{width:176px;flex:none;overflow-y:auto;background:var(--panel);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:max(14px,env(safe-area-inset-top)) 10px 14px}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.bar{flex:none;display:flex;align-items:center;gap:8px;height:calc(44px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 10px 0 max(8px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--bd)}
+#mb{width:36px;height:36px;border:0;background:transparent;color:var(--text);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#mb:hover{background:var(--bd)}
+.ttl{font-size:14px;font-weight:700}
+.body{flex:1;min-height:0;display:flex;position:relative}
+aside{width:200px;flex:none;background:var(--panel);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow-y:auto;padding:14px 10px 14px max(10px,env(safe-area-inset-left))}
+body.nav-closed aside{display:none}
 aside img{height:30px;width:auto;align-self:flex-start;margin:0 6px 4px}
-.tag{font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--sec);margin:0 6px 18px}
+.tag{font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--sec);margin:0 6px 14px}
 .grp{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:var(--sec);margin:12px 8px 4px;opacity:.8}
-nav a{display:block;padding:10px 12px;border-radius:8px;color:var(--sec);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:2px}
+nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--sec);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:2px}
 nav a:hover{color:var(--text)}nav a.on{background:var(--brand);color:#fff}
-nav a .ic{display:none}
+nav a .ic{width:18px;height:18px;flex:none}
 main{flex:1;min-width:0}iframe{width:100%;height:100%;border:0;display:block;background:var(--bg)}
+.scrim{display:none}
 @media(max-width:760px),(max-height:520px){
- aside{width:60px;padding:max(10px,env(safe-area-inset-top)) 3px max(10px,env(safe-area-inset-bottom)) max(3px,env(safe-area-inset-left));overflow-y:auto}
- aside img,.tag,.grp,.l{display:none}
- nav{display:flex;flex-direction:column;gap:2px}
- nav a{padding:8px 1px;text-align:center;font-size:9.5px;line-height:1.15;margin:0;border-radius:8px}
- nav a .ic{display:block;width:21px;height:21px;margin:0 auto 3px}
+ aside{position:absolute;z-index:30;top:0;bottom:0;left:0;width:232px;transform:translateX(-104%);transition:transform .2s ease}
+ body.nav-closed aside{display:flex}
+ body.nav-open aside{transform:none;box-shadow:4px 0 18px rgba(0,0,0,.25)}
+ .scrim{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45)}
+ body.nav-open .scrim{display:block}
 }
-</style></head><body><div class="app">
-<aside><img id="logo" alt="Myrmex"><div class="tag">SMART. RELIABLE. BUILT TO LAST.</div>
-<nav id="nav"><a href="#home" data-k="home"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a><a href="#clients" data-k="clients"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5a3 3 0 010 6M18 14c2 .6 3.5 2.6 3.5 5"/></svg><span>Clients</span></a><div class="grp">DOCUMENTS</div><a href="#quotes" data-k="quotes"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg><span>Quotes</span></a><a href="#invoices" data-k="invoices"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Invoices</span></a><a href="#reports" data-k="reports"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg><span>Reports</span></a><a href="#checklist" data-k="checklist"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.5 1.5L7 5M3.5 12l1.5 1.5L7 11M3.5 18l1.5 1.5L7 17"/></svg><span>Checklist</span></a><div class="grp">TOOLS</div><a href="#tools" data-k="tools"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 00-5 5L3 18l3 3 6.5-6.5a4 4 0 005-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span><span class="l">Property </span>Tools</span></a></nav></aside>
-<main><iframe id="f" title="Myrmex module"></iframe></main></div>
+</style></head><body><div class="app"><header class="bar"><button id="mb" type="button" aria-label="Menu" aria-controls="side" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="ttl" id="ttl">Home</span></header><div class="body"><aside id="side"><img id="logo" alt="Myrmex"><div class="tag">SMART. RELIABLE. BUILT TO LAST.</div>
+<nav id="nav"><a href="#home" data-k="home"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a><a href="#clients" data-k="clients"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5a3 3 0 010 6M18 14c2 .6 3.5 2.6 3.5 5"/></svg><span>Clients</span></a><div class="grp">DOCUMENTS</div><a href="#quotes" data-k="quotes"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg><span>Quotes</span></a><a href="#invoices" data-k="invoices"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Invoices</span></a><a href="#reports" data-k="reports"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg><span>Reports</span></a><a href="#checklist" data-k="checklist"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.5 1.5L7 5M3.5 12l1.5 1.5L7 11M3.5 18l1.5 1.5L7 17"/></svg><span>Checklist</span></a><div class="grp">TOOLS</div><a href="#tools" data-k="tools"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 00-5 5L3 18l3 3 6.5-6.5a4 4 0 005-5l-2.5 2.5-2.5-.5-.5-2.5z"/></svg><span><span class="l">Property </span>Tools</span></a></nav></aside><div class="scrim" id="scrim"></div><main><iframe id="f" title="Myrmex module"></iframe></main></div></div>
 <script>
 (function(){
 if(self!==top){try{top.location.hash='home'}catch(e){}document.documentElement.innerHTML='';return}
@@ -33,12 +38,24 @@ var DARK="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAACFQAAAF2CAYAAABKu14NAAAq
 var M={home:['home.html','Home'],clients:['clients.html','Clients'],quotes:['quotes.html','Quotes'],invoices:['invoices.html','Invoices'],reports:['reports.html','Reports'],checklist:['checklist.html','Checklist'],tools:['tools.html','Property Tools']};
 var FILE={'':'home','index.html':'home','home.html':'home','clients.html':'clients','quotes.html':'quotes','invoices.html':'invoices','reports.html':'reports','checklist.html':'checklist','tools.html':'tools','myrmex-tools-hub_2.html':'tools'};
 var f=document.getElementById('f'),logo=document.getElementById('logo'),cur=null,root=document.documentElement;
+var body=document.body,mq=matchMedia('(max-width:760px),(max-height:520px)'),mb=document.getElementById('mb'),ttl=document.getElementById('ttl');
+function mobile(){return mq.matches}
+function isOpen(){return mobile()?body.classList.contains('nav-open'):!body.classList.contains('nav-closed')}
+function setOpen(o){if(mobile())body.classList.toggle('nav-open',o);else{body.classList.toggle('nav-closed',!o);try{localStorage.setItem('myrmex_nav_open',o?'1':'0')}catch(e){}}mb.setAttribute('aria-expanded',String(o))}
+function initNav(){body.classList.remove('nav-open');var v=null;try{v=localStorage.getItem('myrmex_nav_open')}catch(e){}body.classList.toggle('nav-closed',v==='0');mb.setAttribute('aria-expanded',mobile()?'false':String(v!=='0'))}
+mb.addEventListener('click',function(){setOpen(!isOpen())});
+document.getElementById('scrim').addEventListener('click',function(){setOpen(false)});
+document.getElementById('nav').addEventListener('click',function(){if(mobile())setOpen(false)});
+addEventListener('keydown',function(e){if(e.key==='Escape'&&mobile())setOpen(false)});
+if(mq.addEventListener)mq.addEventListener('change',initNav);else mq.addListener(initNav);
+initNav();
 function theme(){try{var t=localStorage.getItem('myrmex_theme');return t==='light'||t==='dark'?t:null}catch(e){return null}}
 function applyTheme(){var t=theme();if(t)root.setAttribute('data-theme',t);else root.removeAttribute('data-theme');
- logo.src=(t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'))==='light'?LIGHT:DARK;
+ var lt=(t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'))==='light';logo.src=lt?LIGHT:DARK;
+ logo.style.cssText=lt?'':'height:30px;width:111.6px;object-fit:contain;object-position:left top';
  try{if(cur==='tools'&&t)f.contentDocument.documentElement.setAttribute('data-theme',t)}catch(e){}}
 function show(k){document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.dataset.k===k)});
- document.title='Myrmex · '+M[k][1];if(cur!==k){cur=k;f.src=M[k][0]}}
+ document.title='Myrmex · '+M[k][1];ttl.textContent=M[k][1];if(mobile())setOpen(false);if(cur!==k){cur=k;f.src=M[k][0]}}
 function route(){var k=(location.hash||'#home').slice(1);show(M[k]?k:'home')}
 function go(k){if(location.hash==='#'+k)route();else location.hash=k}
 function onClick(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;
@@ -46,7 +63,8 @@ function onClick(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)re
  var p=h.split('#')[0].split('?')[0].split('/').pop();
  if(Object.prototype.hasOwnProperty.call(FILE,p)){e.preventDefault();e.stopPropagation();go(FILE[p])}}
 f.addEventListener('load',function(){try{var d=f.contentDocument;d.addEventListener('click',onClick,true);
- if(!d.getElementById('mx-shell-css')){var st=d.createElement('style');st.id='mx-shell-css';st.textContent='.hubnav{display:none!important}';d.head.appendChild(st)}
+ if(!d.getElementById('mx-shell-css')){var st=d.createElement('style');st.id='mx-shell-css';st.textContent='.hubnav,.page-logo,.page-tagline{display:none!important}';d.head.appendChild(st);
+  d.querySelectorAll('.top').forEach(function(e){if(e.querySelector(':scope > img'))e.style.display='none'})}
  applyTheme()}catch(e){}});
 addEventListener('hashchange',route);
 addEventListener('storage',function(e){if(e.key==='myrmex_theme')applyTheme()});

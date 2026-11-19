@@ -15,7 +15,8 @@ button{background:var(--field);color:var(--text);border:1px solid var(--bds);bor
 @media(max-width:700px){.cards{grid-template-columns:1fr}.k{grid-template-columns:1fr 1fr}}
 </style></head><body><div class="wrap">
 
-<h1>Myrmex App</h1><div class="sub">Documents and property tools in one place.</div>
+<h1 id="hi">Welcome</h1><div class="sub"><span id="hd"></span> · <a href="#" id="hc" style="color:var(--mid);text-decoration:none;font-weight:600">Change name</a></div>
+<form id="hf" style="display:none;gap:8px;margin:0 0 14px"><input id="hn" maxlength="40" placeholder="What should we call you?" autocomplete="given-name" style="flex:1;min-width:0;background:var(--field);color:var(--text);border:1px solid var(--bds);border-radius:8px;padding:10px 12px;font:inherit;font-size:14px"><button type="submit" style="background:var(--mid);border:0;color:#fff;border-radius:8px;padding:10px 16px;font-weight:600;font-size:14px;cursor:pointer">Save</button></form>
 <div class="cards">
 <a class="c" href="clients.html"><b>Clients</b><span id="scl"></span><i>Open →</i></a>
 <a class="c" href="quotes.html"><b>Quotations</b><span id="sq"></span><i>Open →</i></a>
@@ -41,4 +42,24 @@ $('ex').onclick=()=>{const o={};for(const k in KEYS)o[k]=rd(KEYS[k]);const a=doc
 $('im').onclick=()=>$('imf').click();
 $('imf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);let n=0;for(const k in KEYS){if(!Array.isArray(o[k]))continue;const l=rd(KEYS[k]);o[k].forEach(x=>{if(!x||x.id==null)return;const i=l.findIndex(y=>y.id===x.id);if(i>=0)l[i]=x;else{l.unshift(x);n++}});localStorage.setItem(KEYS[k],JSON.stringify(l))}alert('Import complete: '+n+' new items added.');location.reload()}catch(x){alert("Couldn't read that file. Use a Myrmex hub backup (.json).")}};r.readAsText(f)};
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-</script></body></html>
+</script><script>
+(function(){
+var NK='myrmex_user_name',hi=document.getElementById('hi'),hd=document.getElementById('hd'),hc=document.getElementById('hc'),hf=document.getElementById('hf'),hn=document.getElementById('hn');
+function nm(){try{return (localStorage.getItem(NK)||'').trim()}catch(e){return ''}}
+function paint(){var h=new Date().getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening',n=nm();
+ hi.textContent=n?g+', '+n:g;hd.textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'});
+ hc.textContent=n?'Change name':'Add your name';
+ if(!n&&!hf.dataset.shown){hf.dataset.shown='1';hf.style.display='flex'}}
+hc.addEventListener('click',function(e){e.preventDefault();hf.style.display='flex';hn.value=nm();hn.focus()});
+hf.addEventListener('submit',function(e){e.preventDefault();var v=hn.value.trim().replace(/\s+/g,' ');
+ try{if(v)localStorage.setItem(NK,v);else localStorage.removeItem(NK)}catch(x){}
+ hf.style.display='none';paint();var A=window.MyrmexAccount;if(A&&A.signedIn())A.set(v)});
+/* The account's saved name wins; a name typed before signing in is pushed to the account. */
+function sync(){var A=window.MyrmexAccount;if(!A||!A.signedIn())return;var a=A.name(),l=nm();
+ if(a&&a!==l){try{localStorage.setItem(NK,a)}catch(x){}hf.style.display='none';paint()}
+ else if(!a&&l)A.set(l)}
+addEventListener('myrmex-user',sync);
+paint();sync();
+})();
+</script>
+</body></html>
