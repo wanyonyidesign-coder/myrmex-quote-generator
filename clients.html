@@ -20,7 +20,7 @@ button:hover{border-color:var(--mid)}button.p{background:var(--mid);border-color
 #mb{background:var(--panel);border:1px solid var(--bds);border-radius:12px;padding:18px;width:100%;max-width:420px;max-height:90vh;overflow:auto}
 </style></head><body><div class="wrap">
 <h1>Clients</h1><div class="sub">One record per client. Quotes, invoices, reports and checklists are matched to a client by name.</div>
-<div class="bar"><input id="q" placeholder="Search name, phone, email or location"><button class="p" id="add">+ New client</button></div>
+<div class="bar"><input id="q" placeholder="Search clients"><button class="p" id="add">+ New client</button></div>
 <div id="list"></div><div id="unl"></div></div>
 <div id="m"><div id="mb"></div></div>
 <script>
@@ -39,7 +39,7 @@ function render(){load();const q=nk($('q').value);
  $('list').innerHTML=rows.length?rows.map(c=>{const ds=docsFor(c),n=k=>ds.filter(x=>x.kind===k).length,bal=ds.filter(x=>x.kind==='invoice').reduce((s,x)=>s+(+x.d.balance||0),0);
   const meta=[c.phone,c.email,c.location].filter(Boolean).map(esc).join(' · ');
   return `<div class="card"><div class="top"><div><b>${esc(c.name)}</b><div class="meta">${meta||'No contact details'}</div>${c.notes?`<div class="meta">${esc(c.notes)}</div>`:''}</div></div>
-  <div class="chips"><span class="chip">${n('quote')} quotes</span><span class="chip">${n('invoice')} invoices</span><span class="chip">${n('report')} reports</span><span class="chip">${n('checklist')} checklists</span>${bal>0?`<span class="chip w">${kes(bal)} outstanding</span>`:''}</div>
+  <div class="chips"><span class="chip">${n('quote')} ${n('quote')===1?'quote':'quotes'}</span><span class="chip">${n('invoice')} ${n('invoice')===1?'invoice':'invoices'}</span><span class="chip">${n('report')} ${n('report')===1?'report':'reports'}</span><span class="chip">${n('checklist')} ${n('checklist')===1?'checklist':'checklists'}</span>${bal>0?`<span class="chip w">${kes(bal)} outstanding</span>`:''}</div>
   <div class="acts"><button data-a="docs" data-id="${esc(c.id)}">${open.has(c.id)?'Hide':'Show'} documents</button><button data-a="edit" data-id="${esc(c.id)}">Edit</button><button class="d" data-a="del" data-id="${esc(c.id)}">Delete</button></div>
   ${open.has(c.id)?`<div class="docs">${ds.length?ds.map(x=>`<div><span>${DK[x.kind][2]} · ${esc(x.d.num||x.d.date||x.d.title||'')}${x.d.total!=null&&x.kind!=='checklist'?' · '+kes(x.d.total):''}</span><a href="${DK[x.kind][1]}">Open ${DK[x.kind][2].toLowerCase()}s →</a></div>`).join(''):'<div>No documents match this name yet.</div>'}</div>`:''}</div>`}).join(''):`<div class="empty">${C.length?'No clients match your search.':'No clients yet. Add one, or pull names from your existing documents below.'}</div>`;
  const have=new Set(C.map(c=>nk(c.name))),seen=new Map();D.forEach(x=>{if(!have.has(x.key)&&!seen.has(x.key))seen.set(x.key,x)});
